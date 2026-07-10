@@ -45,11 +45,20 @@
   .wrap{max-width:1180px;margin:0 auto;}
 
   /* header */
-  header{margin-bottom:28px;}
+  header{
+    margin-bottom:28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+  }
+  .header-text{flex:1;min-width:0;}
   .eyebrow{color:var(--orange-dark);font-weight:700;font-size:15px;margin-bottom:6px;}
   h1{font-size:34px;line-height:1.3;margin:0 0 6px;}
   h1 .accent{color:var(--orange);}
   .lead{color:var(--sub);font-size:15px;margin:0;}
+  .header-hero{flex:none;width:320px;max-width:38%;}
+  .header-hero img{width:100%;height:auto;display:block;}
 
   /* notice */
   .notice{
@@ -161,8 +170,17 @@
     user-select:none;
   }
   .gift-item:hover:not(.disabled){border-color:var(--orange);}
-  .gift-item .icon{font-size:30px;line-height:1;margin-bottom:8px;}
-  .gift-item .label{font-size:12.5px;color:#6b5a45;font-weight:600;}
+  .gift-item .thumb{
+    width:100%;
+    aspect-ratio:4/3;
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:8px;
+    background:#f3ece0;
+  }
+  .gift-item .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .gift-item .label{font-size:12.5px;color:#6b5a45;font-weight:600;line-height:1.3;}
+  .gift-item.selected .thumb{background:#fff;}
   .gift-item.selected{
     background:var(--orange);
     border-color:var(--orange-dark);
@@ -274,7 +292,8 @@
     .form-grid{grid-template-columns:1fr;}
     .notice ul{columns:1;}
     .row-label{width:64px;font-size:11.5px;}
-    .gift-item .icon{font-size:22px;}
+    header{flex-direction:column;align-items:flex-start;}
+    .header-hero{width:220px;max-width:60%;order:-1;align-self:center;}
   }
 </style>
 </head>
@@ -282,9 +301,17 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">구매할수록 커지는 즐거움!</div>
-    <h1>자재피아 구매고객<br><span class="accent">간식선물 신청 이벤트</span></h1>
-    <p class="lead">구매금액에 따라 원하는 선물을 직접 선택하세요!</p>
+    <div class="header-text">
+      <div class="eyebrow">구매할수록 커지는 즐거움!</div>
+      <h1>자재피아 구매고객<br><span class="accent">간식선물 신청 이벤트</span></h1>
+      <p class="lead">구매금액에 따라 원하는 선물을 직접 선택하세요!</p>
+    </div>
+    <div class="header-hero">
+      <picture>
+        <source srcset="hero-gift-box.webp" type="image/webp">
+        <img src="img/main_snack.png" alt="자재피아 간식선물 세트">
+      </picture>
+    </div>
   </header>
 
   <div class="notice">
@@ -420,7 +447,84 @@
 
   const ROW_COLORS = ["#ffe3c2","#d9e8fb","#e7dbfb","#fbdce7","#fbdce7","#d8f3df","#d9e8fb","#e7dbfb"];
 
-  const COLUMN_ICONS = ["🎁","🍪","🥤","🥜","🫙"];
+  /* =========================================================
+     1-1. 간식선물 상품 데이터 (여기서 직접 수정하세요)
+     ---------------------------------------------------------
+     - 금액대(100/300/500/700/900/1200/1500/2000)별로 5개씩,
+       총 40개 상품을 각각 다른 이름/이미지로 지정할 수 있습니다.
+     - image 값에 실제 이미지 경로(URL 또는 상대경로, 예: "images/100-1.jpg")를
+       넣으면 그 이미지가 표시됩니다.
+     - image를 빈 문자열("")로 두거나 경로가 잘못되어 로드에 실패하면
+       자동으로 상품명이 적힌 임시 플레이스홀더 이미지가 대신 표시되니,
+       이미지를 아직 준비 못했어도 페이지는 정상적으로 보입니다.
+  ========================================================== */
+  const GIFT_CATALOG = {
+    100:  [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    300:  [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    500:  [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    700:  [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    900:  [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    1200: [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    1500: [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ],
+    2000: [
+      { name:"라면 선물세트",     image:"" },
+      { name:"과자 모음 세트",    image:"" },
+      { name:"영양음료 세트",     image:"" },
+      { name:"견과류 세트",       image:"" },
+      { name:"참기름 세트",       image:"" }
+    ]
+  };
+
+  function placeholderImage(text, bg){
+    const safeText = String(text).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='140'>`
+      + `<rect width='100%' height='100%' fill='${bg}'/>`
+      + `<text x='50%' y='50%' font-size='15' fill='#6b5a45' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif'>${safeText}</text>`
+      + `</svg>`;
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  }
 
   const state = {
     totalAmount: null,
@@ -476,12 +580,22 @@
     row.appendChild(rowLabel);
 
     for (let col = 0; col < 5; col++){
+      const giftInfo = GIFT_CATALOG[tier.value][col];
+      const fallbackSrc = placeholderImage(giftInfo.name, ROW_COLORS[rowIdx]);
+      const imgSrc = giftInfo.image && giftInfo.image.trim() !== "" ? giftInfo.image : fallbackSrc;
+
       const item = document.createElement("div");
       item.className = "gift-item";
       item.dataset.row = rowIdx;
       item.dataset.col = col;
       item.dataset.price = tier.value;
-      item.innerHTML = `<div class="icon">${COLUMN_ICONS[col]}</div><div class="label">간식선물0${col+1}</div>`;
+      item.innerHTML =
+        `<div class="thumb"><img src="${imgSrc}" alt="${giftInfo.name}" loading="lazy"></div>`
+        + `<div class="label">${giftInfo.name}</div>`;
+      item.querySelector("img").addEventListener("error", function(){
+        this.onerror = null;
+        this.src = fallbackSrc;
+      });
       item.addEventListener("click", () => toggleItem(rowIdx, col, tier.value, item));
       row.appendChild(item);
     }
@@ -631,8 +745,9 @@
 
     const selectedGiftsText = [...state.selections].map(key => {
       const [rowIdx, col] = key.split("-").map(Number);
-      return `${TIERS[rowIdx].label} 선물 - 간식선물0${col+1}`;
-    }).join(", ");
+      const giftInfo = GIFT_CATALOG[TIERS[rowIdx].value][col];
+      return `${TIERS[rowIdx].label} 선물 - ${giftInfo.name}`;
+    }).join("<br>");
 
     const templateParams = {
       to_email: TARGET_EMAIL,
